@@ -33,12 +33,21 @@ class DjL10n {
 
     // Getting the specific string (if not translated yet, it will safely return just the variable)
     getString(id) {
-        let out = this.data[id]
-        if (out === undefined || out === null)
-            out = this.default[id]
-        if (out === undefined || out === null)
-            out = id;
-        return out;
+        const key = id.split(".")
+        let object = this.data
+        for (const i of key) {
+            object = object[i];
+            if (!object) break;
+        }
+        if (object === undefined) {
+            console.warn(`[l10n] ${key} is not found in translation`);
+            return id;
+        }
+        if (typeof object !== "string") {
+            console.warn(`[l10n] ${key} does not point to a string`);
+            return id;
+        }
+        return object;
     }
 }
 
